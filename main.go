@@ -1,8 +1,6 @@
 package main
 
 import (
-	"gometa/pkg/database"
-
 	"github.com/gofiber/fiber/v2"
 	// "gometa/pkg/database"
 )
@@ -12,20 +10,22 @@ import (
 
 func main() {
 	app := fiber.New()
-	database.InitDB()
-	database.GetSchemas()
+	// database.InitDB()
+	// database.GetSchemas()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World 👋!")
-	})
+	// app.Get("/", func(c *fiber.Ctx) error {
+	// 	return c.SendString("Hello, World 👋!")
+	// })
 
-	app.Get("/tables", func(c *fiber.Ctx) error {
-		return c.SendString("tables")
-	})
+	// app.Get("/tables", func(c *fiber.Ctx) error {
+	// 	return c.SendString("tables")
+	// })
 
 	// app.Get("/schemas", func(c *fiber.Ctx) error {
 	// 	return c.SendString("schemas")
 	// })
 
-	// app.Listen(":3000")
+	registerApi(app)
+
+	app.Listen(":3000")
 }
