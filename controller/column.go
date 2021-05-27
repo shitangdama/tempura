@@ -10,13 +10,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// GetSchemas is
-func GetSchemas(c *fiber.Ctx) error {
+// GetColumns is
+func GetColumns(c *fiber.Ctx) error {
 	// var tables []models.Table
-	rawRows, err := database.Conn.Query(context.Background(), database.SchemaSQL)
-	var rows []models.Schema
+	rawRows, err := database.Conn.Query(context.Background(), database.ColumnSQL)
+	var rows []models.Column
 	for rawRows.Next() {
-		var row models.Schema
+		var row models.Column
 		// err := rawRows.(&row)
 		ScanStruct(rawRows, &row)
 		if err != nil {

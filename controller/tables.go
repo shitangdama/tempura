@@ -30,3 +30,19 @@ func GetTables(c *fiber.Ctx) error {
 	}
 	return c.JSON(rows)
 }
+
+// TruncateTable is
+func TruncateTable(c *fiber.Ctx) error {
+	// return DeleteTable(db, schema, tableName, true)
+	return nil
+}
+
+// DropTable is
+func DropTable(c *fiber.Ctx) error {
+	return nil
+}
+
+// AlterTable is
+func AlterTable(c *fiber.Ctx) error {
+	return nil
+}

@@ -13,6 +13,7 @@ func SetupRoutes(app *fiber.App) {
 	dbRoutes := app.Group("/db")
 
 	dbRoutes.Get("/tables", controller.GetTables)
+	dbRoutes.Get("/columns", controller.GetColumns)
 	// roles.Get("/:id", db.GetRole(db))
 
 }
