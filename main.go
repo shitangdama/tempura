@@ -1,31 +1,23 @@
 package main
 
 import (
+	"gometa/database"
+
 	"github.com/gofiber/fiber/v2"
-	// "gometa/pkg/database"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 // 先获取
 // https://github.com/thomasvvugt/fiber-boilerplate/blob/48cf7a4d10d3a58ea3618a7ef46d8b16fcf2f1e9/main.go
 
 func main() {
+	database.InitDB()
 	app := fiber.New()
-	// database.InitDB()
+	app.Use(cors.New())
+
 	// database.GetSchemas()
 
-	// app.Get("/", func(c *fiber.Ctx) error {
-	// 	return c.SendString("Hello, World 👋!")
-	// })
-
-	// app.Get("/tables", func(c *fiber.Ctx) error {
-	// 	return c.SendString("tables")
-	// })
-
-	// app.Get("/schemas", func(c *fiber.Ctx) error {
-	// 	return c.SendString("schemas")
-	// })
-
-	registerApi(app)
+	SetupRoutes(app)
 
 	app.Listen(":3000")
 }

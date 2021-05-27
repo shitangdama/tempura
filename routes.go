@@ -1,17 +1,16 @@
 package main
 
-// // Return all users as JSON
-// func GetAllUsers(db *database.Database) fiber.Handler {
 import (
-	"gometa/app/controller"
+	"gometa/controller"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func registerApi(api fiber.Router) {
-	roles := api.Group("/dbs")
+// SetupRoutes is
+func SetupRoutes(app *fiber.App) {
+	dbRoutes := app.Group("/db")
 
-	roles.Get("/tables", controller.GetAllTabels())
+	dbRoutes.Get("/tables", controller.GetTables)
 	// roles.Get("/:id", db.GetRole(db))
 
 }

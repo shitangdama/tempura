@@ -1,4 +1,4 @@
-package sql
+package database
 
 var TabelSQL = `SELECT
 c.oid :: int8 AS id,

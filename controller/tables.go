@@ -1,11 +1,19 @@
 package controller
 
-import
+import (
+	"context"
+	"fmt"
+	"gometa/database"
+	"gometa/models"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 // GetTables is
-func GetTables() []models.Table {
+func GetTables(c *fiber.Ctx) error {
 	var tables []models.Table
-	rows, err := Conn.Query(context.Background(), TabelSQL)
+	rows, err := database.Conn.Query(context.Background(), database.TabelSQL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 	}
@@ -28,5 +36,5 @@ func GetTables() []models.Table {
 		}
 		fmt.Printf("%d. %s\n", id, schema)
 	}
-	return tables
+	return c.JSON(tables)
 }
