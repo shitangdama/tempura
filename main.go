@@ -1,14 +1,21 @@
 package main
 
 import (
+	"gometa/controller"
 	"gometa/database"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-// 先获取
-// https://github.com/thomasvvugt/fiber-boilerplate/blob/48cf7a4d10d3a58ea3618a7ef46d8b16fcf2f1e9/main.go
+// SetupRoutes is
+func SetupRoutes(app *fiber.App) {
+	dbRoutes := app.Group("/db")
+
+	dbRoutes.Get("/tables", controller.GetTables)
+	// roles.Get("/:id", db.GetRole(db))
+
+}
 
 func main() {
 	database.InitDB()
