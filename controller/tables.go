@@ -3,46 +3,34 @@ package controller
 import (
 	"context"
 	"fmt"
-	"gometa/database"
-	"gometa/models"
 	"os"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 // GetTables is
-func GetTables(c *fiber.Ctx) error {
-	// var tables []models.Table
-	rawRows, err := database.Conn.Query(context.Background(), database.TabelSQL)
+func GetTables() []models.Table {
+	var tables []models.Table
+	rows, err := Conn.Query(context.Background(), TabelSQL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 	}
 
-	var rows []models.Table
-	for rawRows.Next() {
-		var row models.Table
-		// err := rawRows.(&row)
-		ScanStruct(rawRows, &row)
+	for rows.Next() {
+		var id int32
+		var schema string
+		var name string
+		var rls_enabled bool
+		var rls_forced bool
+		var bytes int32
+		var size int32
+		var live_rows_estimate int
+		var dead_rows_estimate int
+		var comment string
+
+		err := rows.Scan(&id, &schema, &name, &rls_enabled, &rls_forced, &bytes, &size, &live_rows_estimate, &dead_rows_estimate, &comment)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		}
-		rows = append(rows, row)
+		fmt.Printf("%d. %s\n", id, schema)
 	}
-	return c.JSON(rows)
-}
-
-// TruncateTable is
-func TruncateTable(c *fiber.Ctx) error {
-	// return DeleteTable(db, schema, tableName, true)
-	return nil
-}
-
-// DropTable is
-func DropTable(c *fiber.Ctx) error {
-	return nil
-}
-
-// AlterTable is
-func AlterTable(c *fiber.Ctx) error {
-	return nil
+	return tables
 }

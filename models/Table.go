@@ -37,6 +37,36 @@ func CreateTable(name string, schema string, comment string) error {
 	return err
 }
 
+func GetTables() {
+
+	var sum, n int32
+
+	// invoke query
+	rows, err := db.Query("SELECT generate_series(1,$1)", 10)
+	// handle query error
+	if err != nil {
+		fmt.Println(err)
+	}
+	// defer close result set
+	defer rows.Close()
+
+	// Iter results
+	for rows.Next() {
+		if err = rows.Scan(&n); err != nil {
+			fmt.Println(err) // Handle scan error
+		}
+		sum += n // Use result
+	}
+
+	// check iteration error
+	if rows.Err() != nil {
+		fmt.Println(err)
+	}
+
+}
+
 func UpdateTable() {
 
 }
+
+// https://blog.csdn.net/weixin_34168700/article/details/90433680
