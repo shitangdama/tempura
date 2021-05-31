@@ -31,9 +31,22 @@ func GetTables(c *fiber.Ctx) error {
 	return c.JSON(rows)
 }
 
+func createTable(c *fiber.Ctx) error {
+	// https://github.com/datalanche/node-pg-format
+	// 三个参数
+	var name = c.Query("name", "")
+	var schema = c.Query("name", "public")
+	var comment = c.Query("name", "")
+	// err := models.CreateTable(name, schema, comment)
+
+	// retrieve
+	return err
+}
+
 // TruncateTable is
 func TruncateTable(c *fiber.Ctx) error {
 	// return DeleteTable(db, schema, tableName, true)
+
 	return nil
 }
 
