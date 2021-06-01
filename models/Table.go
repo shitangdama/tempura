@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -10,17 +9,17 @@ import (
 
 // Table is
 type Table struct {
-	ID               int32          `json:"id"`
-	Schema           string         `json:"schema"`
-	Name             string         `json:"name"`
-	RlsEnabled       bool           `json:"rls_enabled"`
-	RlsForced        bool           `json:"rls_forced"`
-	Relreplident     uint8          `json:"replica_identity"`
-	Bytes            int64          `json:"bytes"`
-	Size             int64          `json:"size"`
-	LiveRowsEstimate int            `json:"live_rows_estimate"`
-	DeadRowsEstimate int            `json:"dead_rows_estimate"`
-	Comment          sql.NullString `json:"comment"`
+	ID               int32  `db:"id" json:"id"`
+	Schema           string `db:"schema" json:"schema"`
+	Name             string `db:"name" json:"name"`
+	RlsEnabled       bool   `db:"rls_enabled" json:"rls_enabled"`
+	RlsForced        bool   `db:"rls_forced" json:"rls_forced"`
+	Relreplident     uint8  `db:"replica_identity" json:"replica_identity"`
+	Bytes            int64  `db:"bytes" json:"bytes"`
+	Size             int64  `db:"size" json:"size"`
+	LiveRowsEstimate int    `db:"live_rows_estimate" json:"live_rows_estimate"`
+	DeadRowsEstimate int    `db:"dead_rows_estimate" json:"dead_rows_estimate"`
+	Comment          string `db:"comment" json:"comment"`
 }
 
 // CreateTable is
@@ -63,9 +62,11 @@ func GetTables(DB *database.DBManager) []Table {
 
 	for rows.Next() {
 		table := Table{}
+		// table := map[string]interface{}{}
+		// if err = ScanMap(rows, &table); err != nil {
 		if err = ScanStruct(rows, &table); err != nil {
-			tables = append(tables, table)
-			fmt.Println(table.ID)
+			// tables = append(tables, table)
+			fmt.Println(table)
 		}
 	}
 

@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+
 	"gometa/database"
 	"gometa/models"
+	// _ "github.com/jackc/pgx/v4/stdlib"
 )
 
 // // SetupRoutes is
@@ -30,3 +32,6 @@ func main() {
 	models.GetTables(database.DB)
 
 }
+
+// we need some data to query; I'll create a temp table
+// and populate

@@ -4,34 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"strings"
 
-	"github.com/mitchellh/mapstructure"
+	"github.com/jmoiron/sqlx/reflectx"
 	"github.com/pkg/errors"
 )
-
-// // ScanMap is
-// func ScanMap(rows pgx.Rows, dest *map[string]interface{}) error {
-// 	columns := FieldNames(rows)
-// 	/*
-// 		values := make([]interface{}, len(columns))
-// 		for i := range values {
-// 			x := new(interface{})
-// 			values[i] = x
-// 			//values[i] = "" //interface{}{}
-// 		}
-// 		err := rows.Scan(values...)
-// 	*/
-// 	values, err := rows.Values()
-// 	if err != nil {
-// 		return errors.Wrap(err, "ScanMap")
-// 	}
-
-// 	for i, column := range columns {
-// 		(*dest)[string(column)] = values[i]
-// 		//		(*dest)[string(column)] = *(values[i].(*interface{}))
-// 	}
-// 	return rows.Err()
-// }
 
 // ScanMap is
 func ScanMap(rows *sql.Rows, dest *map[string]interface{}) error {
@@ -44,7 +21,8 @@ func ScanMap(rows *sql.Rows, dest *map[string]interface{}) error {
 	values := make([]interface{}, len(columns))
 
 	for index := range values {
-		values[index] = new(sql.NullString)
+		// values[index] = new(sql.NullString)
+		values[index] = new(interface{})
 	}
 
 	if err := rows.Scan(values...); err != nil {
@@ -52,36 +30,92 @@ func ScanMap(rows *sql.Rows, dest *map[string]interface{}) error {
 	}
 
 	for index, columnName := range columns {
-		(*dest)[string(columnName)] = *(values[index].(*sql.NullString))
+		(*dest)[string(columnName)] = *values[index].(*interface{})
 
-		fmt.Println((*values[index].(*sql.NullString)).String)
-		fmt.Println(reflect.ValueOf(values[index]).Elem())
+		fmt.Println(*values[index].(*interface{}))
+
 	}
 	return nil
 }
 
-// ScanMapArray is
-func ScanMapArray() error {
+var mapper = reflectx.NewMapperFunc("db", strings.ToLower)
 
-	return nil
-}
-
+// https://github.com/jmoiron/sqlx/blob/a1d5e64734233358bc4e0a54beddc18509071a95/sqlx.go#L895
 // ScanStruct is
 func ScanStruct(rows *sql.Rows, dest interface{}) error {
-	m := map[string]interface{}{}
-	err := ScanMap(rows, &m)
-	if err != nil {
-		return errors.Wrap(err, "Map")
+
+	v := reflect.ValueOf(dest)
+	if v.Kind() != reflect.Ptr {
+		return errors.New("must pass a pointer, not a value, to ScanStruct destination")
 	}
-	config := &mapstructure.DecoderConfig{
-		Metadata: nil,
-		Result:   dest,
-		TagName:  "db",
+	if v.IsNil() {
+		return errors.New("nil pointer passed to ScanStruct destination")
 	}
 
-	decoder, err := mapstructure.NewDecoder(config)
-	if err != nil {
-		return errors.Wrap(err, "Decoder")
+	base := v.Type()
+	if base.Kind() == reflect.Ptr {
+		base = base.Elem()
 	}
-	return decoder.Decode(m)
+
+	columns, err := rows.Columns()
+
+	if err != nil {
+		return err
+	}
+	fields := mapper.TraversalsByName(v.Type(), columns)
+	fmt.Println(44444)
+	fmt.Println(columns)
+	fmt.Println(v.Type())
+	fmt.Println(fields)
+	fmt.Println(44444)
+	// if we are not unsafe and are missing fields, return an error
+	if f, err := missingFields(fields); err != nil {
+		fmt.Println(3333)
+		return fmt.Errorf("missing destination name %s in %T", columns[f], dest)
+	}
+	values := make([]interface{}, len(columns))
+
+	err = fieldsByTraversal(v, fields, values)
+	fmt.Println(22222)
+	if err != nil {
+		return err
+	}
+	fmt.Println(11111)
+	fmt.Println(v)
+	fmt.Println(fields)
+	fmt.Println(values)
+	// scan into the struct field pointers and append to our results
+	return rows.Scan(values...)
+}
+
+func missingFields(transversals [][]int) (field int, err error) {
+	for i, t := range transversals {
+		if len(t) == 0 {
+			return i, errors.New("missing field")
+		}
+	}
+	return 0, nil
+}
+
+func fieldsByTraversal(v reflect.Value, traversals [][]int, values []interface{}) error {
+	v = reflect.Indirect(v)
+	if v.Kind() != reflect.Struct {
+		return errors.New("argument is not a struct")
+	}
+
+	for i, traversal := range traversals {
+		if len(traversal) == 0 {
+			values[i] = new(interface{})
+			continue
+		}
+
+		f := reflectx.FieldByIndexes(v, traversal)
+		if f.Kind() == reflect.Ptr {
+			values[i] = f.Interface()
+		} else {
+			values[i] = f.Addr().Interface()
+		}
+	}
+
+	return nil
 }

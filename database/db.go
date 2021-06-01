@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	// "database/sql"
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
@@ -20,7 +19,7 @@ type DBManager struct {
 // DBInit is
 func DBInit() {
 	var err error
-	conn, err := sql.Open("pgx", "postgres://postgres:kbr199sd5shi@localhost:5432/postgres")
+	conn, err := sql.Open("pgx", "postgres://postgres:changeme@localhost:5432/postgres")
 	DB = &DBManager{
 		Conn: conn,
 	}
