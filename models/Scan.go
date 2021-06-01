@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"reflect"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
@@ -40,26 +41,27 @@ func ScanMap(rows *sql.Rows, dest *map[string]interface{}) error {
 		return err
 	}
 
-	if !rows.Next() {
-		return rows.Err()
-	}
-
 	values := make([]interface{}, len(columns))
 
 	for index := range values {
 		values[index] = new(sql.NullString)
 	}
 
-	err = rows.Scan(values...)
-
-	if err != nil {
+	if err := rows.Scan(values...); err != nil {
 		return err
 	}
 
 	for index, columnName := range columns {
-		fmt.Println(*(values[index].(*sql.NullString)))
 		(*dest)[string(columnName)] = *(values[index].(*sql.NullString))
+
+		fmt.Println((*values[index].(*sql.NullString)).String)
+		fmt.Println(reflect.ValueOf(values[index]).Elem())
 	}
+	return nil
+}
+
+// ScanMapArray is
+func ScanMapArray() error {
 
 	return nil
 }
