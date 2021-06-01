@@ -1,26 +1,45 @@
 package database
 
 import (
-	"context"
+	"database/sql"
 	"fmt"
 	"os"
 
-	"github.com/jackc/pgx/v4"
 	// "database/sql"
-	// _ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-// Conn is
-// var Conn *sql.DB
-var Conn *pgx.Conn
+// DB is
+var DB *DBManager
 
-// InitDB is
-func InitDB() {
+// DBManager is
+type DBManager struct {
+	Conn *sql.DB
+}
+
+// DBInit is
+func DBInit() {
 	var err error
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
-	Conn, err = pgx.Connect(context.Background(), "postgres://postgres:kbr199sd5shi@localhost:5432/postgres")
+	conn, err := sql.Open("pgx", "postgres://postgres:kbr199sd5shi@localhost:5432/postgres")
+	DB = &DBManager{
+		Conn: conn,
+	}
+	// Conn, err = pgx.Connect(context.Background(), "postgres://postgres:kbr199sd5shi@localhost:5432/postgres")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
+
+	if err = DB.Conn.Ping(); err != nil {
+		// do something about db error
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+	}
+	fmt.Println("connect to database")
+
+	_, err = DB.Conn.Exec("select 1;")
+}
+
+// DBClose is
+func DBClose() {
+	DB.Conn.Close()
 }

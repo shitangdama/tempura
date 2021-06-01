@@ -1,31 +1,32 @@
 package main
 
 import (
-	"gometa/controller"
+	"fmt"
 	"gometa/database"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"gometa/models"
 )
 
-// SetupRoutes is
-func SetupRoutes(app *fiber.App) {
-	dbRoutes := app.Group("/db")
+// // SetupRoutes is
+// func SetupRoutes(app *fiber.App) {
+// 	dbRoutes := app.Group("/db")
 
-	dbRoutes.Get("/tables", controller.GetTables)
-	dbRoutes.Get("/columns", controller.GetColumns)
-	// roles.Get("/:id", db.GetRole(db))
+// 	dbRoutes.Get("/tables", controller.GetTables)
+// 	dbRoutes.Get("/columns", controller.GetColumns)
+// 	// roles.Get("/:id", db.GetRole(db))
 
-}
+// }
 
 func main() {
-	database.InitDB()
-	app := fiber.New()
-	app.Use(cors.New())
+	database.DBInit()
+	// app := fiber.New()
+	// app.Use(cors.New())
 
 	// database.GetSchemas()
+	// SetupRoutes(app)
 
-	SetupRoutes(app)
+	// app.Listen(":3000")
+	fmt.Print(database.DB)
+	// models.CreateTable(database.DB, "test", "", "")
+	models.GetTables(database.DB)
 
-	app.Listen(":3000")
 }
