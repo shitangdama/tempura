@@ -18,3 +18,5 @@ https://github.com/argoproj/argo-workflows/issues/3523
 https://admiralty.io/blog/2019/01/17/running-argo-workflows-across-multiple-kubernetes-clusters/
 
 https://www.lijiaocn.com/%E9%A1%B9%E7%9B%AE/2017/04/11/calico-usage.html#%E6%A8%A1%E6%8B%9F%E4%B8%80%E4%B8%AA%E7%A7%9F%E6%88%B7%E7%BD%91%E7%BB%9C
+
+https://blog.csdn.net/yevvzi/article/details/103694527
