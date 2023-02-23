@@ -7,5 +7,5 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/pkg/errors v0.8.1
-	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/text v0.3.8 // indirect
 )
